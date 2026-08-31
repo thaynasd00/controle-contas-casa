@@ -1,0 +1,1 @@
+(()=>{const h=document.head;[['link',{rel:'apple-touch-icon',sizes:'180x180',href:'apple-touch-icon.png?v=20260831'}],['link',{rel:'icon',type:'image/png',href:'favicon.png?v=20260831'}],['link',{rel:'manifest',href:'manifest.webmanifest?v=20260831'}]].forEach(([t,a])=>{let e=document.createElement(t);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));h.appendChild(e)})})();
