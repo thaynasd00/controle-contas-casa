@@ -1,4 +1,6 @@
 (()=>{if(window.__summaryV12)return;window.__summaryV12=true;
+const presets=['Conta de luz','Cartão de crédito Thayna','Cartão de crédito Elias','Internet fixa','Celular Elias','Celular Thayna','Financiamento apartamento','Financiamento moto Thayna','Condomínio','IPTU','Entrada parcelada'];
+const nome=document.getElementById('nome');if(nome){let dl=document.getElementById('contasFixas');if(!dl){dl=document.createElement('datalist');dl.id='contasFixas';document.body.appendChild(dl)}dl.innerHTML=presets.map(x=>'<option value="'+x+'"></option>').join('');nome.setAttribute('list','contasFixas');nome.placeholder='Escolha uma conta fixa ou digite outra';}
 const box=document.getElementById('custoMensal');if(!box)return;
 const tipos=['mes','atraso','geral',...CATS];
 function itemConta(c){return '<div style="padding:12px 0;border-bottom:1px solid #e5e7eb"><b>'+esc(c.nome||'Conta')+'</b><div class="muted">'+fmt.format(Number(c.valor||0))+' · vence '+br(c.vencimento)+' · '+esc(c.status||'')+'</div>'+(c.observacoes?'<div style="margin-top:4px">📝 '+esc(c.observacoes)+'</div>':'')+'</div>'}
