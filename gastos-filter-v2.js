@@ -1,0 +1,12 @@
+(()=>{if(window.__gastosFilterV2)return;window.__gastosFilterV2=true;
+const lista=document.getElementById('glista'),titulo=document.getElementById('gtituloLista');if(!lista||!titulo)return;
+const KEY='contasCasaCategoriasExtrasV1';const base=['Gasolina','Delivery','Mercado','Saídas','🐶 Cachorros','Farmácia','Uber','Outros'];
+const extras=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]').filter(x=>typeof x==='string'&&x.trim())}catch{return[]}};
+const antiga=document.getElementById('filtroGastosBox');if(antiga)antiga.remove();
+const box=document.createElement('section');box.id='filtroGastosBox';box.className='card';box.style.marginTop='14px';box.innerHTML='<label style="display:block;font-size:14px;margin-bottom:7px">Filtrar gastos</label><select id="filtroGastosCategoria" style="width:100%;min-height:46px"></select>';titulo.parentNode.insertBefore(box,titulo);
+const sel=document.getElementById('filtroGastosCategoria');
+function cats(){const doMes=[...lista.children].map(i=>{const t=(i.textContent||'').trim();return t.includes(' — ')?t.split(' — ')[0].trim():t.split('\n')[0].trim()}).filter(Boolean);return [...new Set([...base,...extras(),...doMes])].filter(Boolean)}
+function preencher(mantera=true){const atual=mantera?sel.value:'todos';sel.innerHTML='<option value="todos">Todos os gastos</option>'+cats().map(c=>'<option value="'+c.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">'+c+'</option>').join('');if([...sel.options].some(o=>o.value===atual))sel.value=atual}
+function aplicar(){const cat=sel.value;[...lista.children].forEach(item=>{if(cat==='todos'){item.style.display='';return}const txt=(item.textContent||'').trim();item.style.display=(txt===cat||txt.startsWith(cat+' —')||txt.startsWith(cat+'\n'))?'':'none'});const vis=[...lista.children].filter(x=>x.style.display!=='none').length;let vazio=document.getElementById('filtroGastosVazio');if(!vis&&lista.children.length){if(!vazio){vazio=document.createElement('div');vazio.id='filtroGastosVazio';vazio.className='card muted';vazio.textContent='Nenhum gasto desta categoria neste mês.';lista.parentNode.insertBefore(vazio,lista.nextSibling)}}else if(vazio)vazio.remove()}
+preencher(false);sel.addEventListener('change',aplicar);new MutationObserver(()=>setTimeout(()=>{preencher(true);aplicar()},0)).observe(lista,{childList:true,subtree:false});window.addEventListener('categoriaGastoCriada',()=>{preencher(true);aplicar()});aplicar();
+})();
