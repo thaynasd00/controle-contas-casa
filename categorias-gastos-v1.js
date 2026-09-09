@@ -1,0 +1,11 @@
+(()=>{if(window.__categoriasGastosV1)return;window.__categoriasGastosV1=true;
+const FIXAS=['Farmácia','Uber'];
+const KEY='contasCasaCategoriasExtrasV1';
+const ler=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]').filter(x=>typeof x==='string'&&x.trim())}catch{return[]}};
+const salvar=a=>localStorage.setItem(KEY,JSON.stringify([...new Set(a.map(x=>x.trim()).filter(Boolean))]));
+function ehSelectCategoria(sel){const vals=[...sel.options].map(o=>o.value||o.textContent);return vals.includes('Gasolina')&&vals.includes('Delivery')&&vals.includes('Mercado')}
+function adicionarOpcao(sel,nome){if(!nome||[...sel.options].some(o=>o.value===nome))return;const nova=[...sel.options].find(o=>o.value==='__nova_categoria__');const op=document.createElement('option');op.value=nome;op.textContent=nome;if(nova)sel.insertBefore(op,nova);else sel.appendChild(op)}
+function aplicar(sel){if(!ehSelectCategoria(sel)||sel.dataset.catCustom==='1')return;sel.dataset.catCustom='1';[...FIXAS,...ler()].forEach(c=>adicionarOpcao(sel,c));const op=document.createElement('option');op.value='__nova_categoria__';op.textContent='➕ Adicionar nova categoria...';sel.appendChild(op);sel.addEventListener('change',()=>{if(sel.value!=='__nova_categoria__')return;const anterior=sel.dataset.valorAnterior||'';let nome=prompt('Nome da nova categoria:');nome=(nome||'').trim();if(!nome){sel.value=anterior;return}if(nome.length>40){alert('Use um nome de até 40 caracteres.');sel.value=anterior;return}const atuais=ler();if(!FIXAS.includes(nome)&&!atuais.includes(nome)){atuais.push(nome);salvar(atuais)}document.querySelectorAll('select').forEach(s=>{if(ehSelectCategoria(s))adicionarOpcao(s,nome)});sel.value=nome;sel.dispatchEvent(new Event('input',{bubbles:true}));window.dispatchEvent(new CustomEvent('categoriaGastoCriada',{detail:{nome}}))});sel.addEventListener('focus',()=>{sel.dataset.valorAnterior=sel.value});sel.addEventListener('pointerdown',()=>{sel.dataset.valorAnterior=sel.value})}
+function scan(){document.querySelectorAll('select').forEach(aplicar)}
+scan();new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});
+})();
