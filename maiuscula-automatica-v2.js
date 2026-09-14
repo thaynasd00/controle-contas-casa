@@ -1,0 +1,8 @@
+(()=>{if(window.__maiusculaAutomaticaV2)return;window.__maiusculaAutomaticaV2=true;
+const ignorar=el=>{const t=(el.getAttribute('type')||'text').toLowerCase();return ['email','password','number','date','time','datetime-local','month','week','url','tel','checkbox','radio','file','range','color','hidden'].includes(t)||['numeric','decimal'].includes((el.inputMode||'').toLowerCase());};
+const cap=s=>{if(!s)return s;let inicio=true,out='';for(let i=0;i<s.length;i++){const ch=s[i];if(inicio&&/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(ch)){out+=ch.toLocaleUpperCase('pt-BR');inicio=false;}else out+=ch;if(/[.!?]/.test(ch))inicio=true;else if(!/\s/.test(ch)&&!/[.!?]/.test(ch))inicio=false;}return out;};
+function preparar(root=document){root.querySelectorAll('input,textarea').forEach(el=>{if(ignorar(el))return;el.setAttribute('autocapitalize','sentences');el.setAttribute('autocorrect','on');el.setAttribute('spellcheck','true');el.setAttribute('enterkeyhint','done');});}
+preparar();new MutationObserver(()=>preparar()).observe(document.body,{childList:true,subtree:true});
+document.addEventListener('input',e=>{const el=e.target;if(!(el instanceof HTMLInputElement||el instanceof HTMLTextAreaElement)||ignorar(el)||el.isComposing)return;const antes=el.value,depois=cap(antes);if(antes!==depois){const a=el.selectionStart,b=el.selectionEnd;el.value=depois;try{el.setSelectionRange(a,b)}catch(_){}}},true);
+document.addEventListener('compositionend',e=>{const el=e.target;if(!(el instanceof HTMLInputElement||el instanceof HTMLTextAreaElement)||ignorar(el))return;const a=el.selectionStart,b=el.selectionEnd;el.value=cap(el.value);try{el.setSelectionRange(a,b)}catch(_){}},true);
+})();
